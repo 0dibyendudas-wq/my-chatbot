@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dibyendu AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  height:100vh;overflow:hidden;display:flex;
+  background:#eef0f8;
+}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 20%,rgba(255,182,220,.38) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 10%,rgba(180,200,255,.32) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 60% 85%,rgba(200,230,255,.22) 0%,transparent 60%),
+    #eef0f8;
+  z-index:0;
+}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:56px;
+  min-width:56px;
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(20px);
+  border-right:1px solid rgba(255,255,255,.7);
+  display:flex;flex-direction:column;align-items:flex-start;
+  padding:12px 0;gap:2px;
+  position:relative;z-index:20;flex-shrink:0;
+  transition:width .3s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+#sidebar.open{width:220px;}
+
+/* hamburger */
+.sb-toggle{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;background:none;border:none;
+  color:#64748b;margin:0 10px 6px;flex-shrink:0;
+  transition:background .15s,color .15s;
+}
+.sb-toggle:hover{background:rgba(255,255,255,.8);color:#a855f7;}
+
+/* logo row */
+.sb-logo-row{
+  display:flex;align-items:center;gap:10px;
+  padding:0 10px;margin-bottom:8px;width:220px;
+}
+.sb-logo{
+  width:36px;height:36px;min-width:36px;border-radius:12px;
+  background:linear-gradient(135deg,#f472b6,#a855f7);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:15px;flex-shrink:0;
+}
+.sb-logo-text{
+  font-size:14px;font-weight:600;color:#1e293b;
+  white-space:nowrap;opacity:0;
+  transition:opacity .2s;
+}
+#sidebar.open .sb-logo-text{opacity:1;}
+
+/* new chat btn */
+.sb-new{
+  display:flex;align-items:center;gap:8px;
+  width:200px;margin:0 10px 6px;padding:8px 10px;
+  border-radius:10px;
+  background:rgba(168,85,247,.1);
+  border:1px solid rgba(168,85,247,.25);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;color:#a855f7;
+  white-space:nowrap;transition:background .15s;
+}
+.sb-new:hover{background:rgba(168,85,247,.18);}
+.sb-new svg{flex-shrink:0;}
+.sb-new-label{opacity:0;transition:opacity .2s;}
+#sidebar.open .sb-new-label{opacity:1;}
+
+/* section label */
+.sb-section{
+  font-size:10px;font-weight:600;color:#94a3b8;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 14px;white-space:nowrap;
+  opacity:0;transition:opacity .2s;width:220px;
+}
+#sidebar.open .sb-section{opacity:1;}
+
+/* history */
+.sb-history{flex:1;width:220px;overflow-y:auto;overflow-x:hidden;}
+.sb-history::-webkit-scrollbar{width:3px;}
+.sb-history::-webkit-scrollbar-thumb{background:rgba(200,200,220,.4);border-radius:3px;}
+
+.sb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 14px;cursor:pointer;border-radius:8px;
+  margin:1px 8px;white-space:nowrap;overflow:hidden;
+  color:#475569;font-size:13px;
+  transition:background .12s,color .12s;
+}
+.sb-item:hover{background:rgba(255,255,255,.75);color:#a855f7;}
+.sb-item.active{background:rgba(168,85,247,.1);color:#a855f7;font-weight:500;}
+.sb-item svg{flex-shrink:0;width:14px;height:14px;}
+.sb-item-label{opacity:0;transition:opacity .2s;overflow:hidden;text-overflow:ellipsis;}
+#sidebar.open .sb-item-label{opacity:1;}
+
+/* divider */
+.sb-divider{width:calc(100% - 20px);height:1px;background:rgba(0,0,0,.07);margin:6px 10px;}
+
+/* nav items */
+.sb-nav{width:100%;display:flex;flex-direction:column;gap:2px;padding:0 8px;}
+.sb-nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:10px;cursor:pointer;
+  color:#64748b;font-size:13px;font-weight:500;
+  white-space:nowrap;overflow:hidden;
+  transition:background .15s,color .15s;
+}
+.sb-nav-item:hover{background:rgba(255,255,255,.8);color:#a855f7;}
+.sb-nav-item svg{flex-shrink:0;width:17px;height:17px;}
+.sb-nav-label{opacity:0;transition:opacity .2s;}
+#sidebar.open .sb-nav-label{opacity:1;}
+
+/* ── MAIN ── */
+.main{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  position:relative;z-index:5;overflow:hidden;
+}
+
+/* topbar */
+.topbar{
+  width:100%;display:flex;align-items:center;
+  justify-content:space-between;padding:14px 22px;
+}
+.topbar-title{font-size:15px;font-weight:600;color:#1e293b;}
+.topbar-btn{
+  width:34px;height:34px;border-radius:10px;
+  background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);
+  backdrop-filter:blur(10px);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;color:#64748b;
+  transition:color .15s;
+}
+.topbar-btn:hover{color:#a855f7;}
+
+/* chat container */
+.chat-container{
+  flex:1;width:100%;max-width:700px;
+  display:flex;flex-direction:column;overflow:hidden;padding:0 16px;
+}
+
+/* chat area */
+.chat-area{
+  flex:1;overflow-y:auto;display:flex;flex-direction:column;
+  gap:20px;padding:8px 0 14px;scroll-behavior:smooth;
+}
+.chat-area::-webkit-scrollbar{width:4px;}
+.chat-area::-webkit-scrollbar-thumb{background:rgba(200,200,220,.45);border-radius:4px;}
+
+/* welcome */
+.welcome{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;flex:1;text-align:center;gap:14px;padding:40px 0;
+  animation:fadeUp .4s ease;
+}
+.welcome-orb{
+  width:72px;height:72px;border-radius:50%;
+  background:conic-gradient(from 180deg,#ff6eb4,#a78bfa,#60a5fa,#34d399,#ff6eb4);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 8px 32px rgba(167,139,250,.3);
+  animation:hue 8s linear infinite;
+}
+@keyframes hue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
+.welcome h2{font-size:22px;font-weight:600;color:#1e293b;}
+.welcome h2 span{background:linear-gradient(90deg,#ec4899,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.welcome p{font-size:14px;color:#64748b;}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px;}
+.chip{
+  padding:7px 14px;border-radius:20px;
+  border:1px solid rgba(255,255,255,.85);
+  background:rgba(255,255,255,.6);backdrop-filter:blur(10px);
+  font-size:12px;color:#475569;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.chip:hover{background:rgba(255,255,255,.95);border-color:#c4b5fd;color:#a855f7;transform:translateY(-1px);}
+
+/* messages */
+.msg{display:flex;gap:12px;align-items:flex-end;animation:fadeUp .22s ease;}
+.msg.user{flex-direction:row-reverse;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.ai-orb{
+  width:34px;height:34px;min-width:34px;border-radius:50%;
+  background:conic-gradient(from 180deg,#ff6eb4,#a78bfa,#60a5fa,#34d399,#ff6eb4);
+  animation:hue 8s linear infinite;
+  box-shadow:0 3px 12px rgba(167,139,250,.3);flex-shrink:0;
+}
+
+.msg-col{display:flex;flex-direction:column;gap:4px;max-width:72%;}
+.msg.user .msg-col{align-items:flex-end;}
+
+.bubble{padding:12px 16px;border-radius:20px;font-size:14px;line-height:1.6;}
+.msg.ai .bubble{
+  background:rgba(255,255,255,.78);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.9);border-bottom-left-radius:6px;
+  color:#1e293b;box-shadow:0 2px 16px rgba(0,0,0,.06);
+}
+.msg.user .bubble{
+  background:linear-gradient(135deg,#f472b6,#ec4899);
+  border-bottom-right-radius:6px;color:#fff;
+  box-shadow:0 4px 18px rgba(236,72,153,.35);
+}
+
+.msg-meta{font-size:11px;color:#94a3b8;padding:0 4px;}
+.msg-acts{display:flex;gap:6px;padding:0 4px;}
+.msg-act{background:none;border:none;cursor:pointer;color:#94a3b8;padding:2px;transition:color .12s;}
+.msg-act:hover{color:#a855f7;}
+
+/* typing */
+.typing-wrap{display:flex;align-items:center;gap:10px;}
+.dots{display:flex;gap:4px;}
+.dots span{
+  width:6px;height:6px;border-radius:50%;
+  background:linear-gradient(135deg,#f472b6,#a855f7);
+  animation:bounce 1.2s infinite;
+}
+.dots span:nth-child(2){animation-delay:.2s;}
+.dots span:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.typing-label{font-size:12px;color:#94a3b8;}
+
+/* ── INPUT ── */
+.input-wrapper{padding:0 0 18px;}
+
+/* animated gradient border */
+.input-glow{
+  border-radius:20px;padding:1.5px;
+  background:rgba(226,232,240,.6);
+  transition:background .3s;
+}
+.input-glow.active{
+  background:linear-gradient(90deg,#ef4444,#a855f7,#818cf8,#ef4444);
+  background-size:300% 100%;
+  animation:glow 2.5s ease infinite;
+  box-shadow:0 0 24px rgba(168,85,247,.2);
+}
+@keyframes glow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.input-box{
+  background:rgba(255,255,255,.85);backdrop-filter:blur(24px);
+  border-radius:18.5px;padding:14px 16px 12px;
+  display:flex;flex-direction:column;gap:12px;
+}
+
+#msg-input{
+  width:100%;border:none;outline:none;font-size:14px;
+  font-family:'DM Sans',sans-serif;color:#1e293b;
+  background:transparent;resize:none;line-height:1.5;max-height:100px;overflow-y:auto;
+}
+#msg-input::placeholder{color:#94a3b8;}
+
+.input-row{display:flex;align-items:center;gap:8px;}
+.pill{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:20px;
+  border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.75);
+  font-size:12px;font-weight:500;color:#475569;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.pill:hover{background:rgba(255,255,255,.95);border-color:#c4b5fd;color:#a855f7;}
+.pill svg{width:13px;height:13px;}
+.spacer{flex:1;}
+
+/* RED + PURPLE gradient send button */
+.send-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 20px;border-radius:20px;
+  background:linear-gradient(135deg,#ef4444 0%,#a855f7 100%);
+  border:none;color:#fff;font-size:13px;font-weight:600;
+  font-family:'DM Sans',sans-serif;cursor:pointer;
+  box-shadow:0 4px 16px rgba(168,85,247,.4);
+  transition:transform .1s,box-shadow .15s;
+  animation:btnPulse 3s ease infinite;
+}
+@keyframes btnPulse{
+  0%,100%{box-shadow:0 4px 16px rgba(239,68,68,.4);}
+  50%{box-shadow:0 4px 22px rgba(168,85,247,.55);}
+}
+.send-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(168,85,247,.55);}
+.send-btn:active{transform:scale(.95);}
+.send-btn svg{width:14px;height:14px;fill:#fff;}
+
+.disclaimer{text-align:center;font-size:11px;color:#94a3b8;margin-top:8px;}
+
+/* attach bar */
+#attach-bar{
+  display:none;align-items:center;gap:8px;
+  padding:6px 12px;background:rgba(244,114,182,.1);
+  border:1px solid rgba(244,114,182,.3);border-radius:10px;
+  font-size:12px;color:#ec4899;margin-bottom:8px;
+}
+#attach-bar button{margin-left:auto;background:none;border:none;cursor:pointer;color:#ec4899;font-size:14px;}
+#file-input{display:none;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <!-- hamburger -->
+  <button class="sb-toggle" onclick="toggleSB()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+
+  <!-- logo -->
+  <div class="sb-logo-row">
+    <div class="sb-logo">D</div>
+    <span class="sb-logo-text">Dibyendu AI</span>
+  </div>
+
+  <!-- new chat -->
+  <button class="sb-new" onclick="newChat()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <span class="sb-new-label">New Chat</span>
+  </button>
+
+  <!-- history -->
+  <div class="sb-section">Recent</div>
+  <div class="sb-history" id="sb-history"></div>
+
+  <div class="sb-divider"></div>
+
+  <!-- nav -->
+  <div class="sb-nav">
+    <div class="sb-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      <span class="sb-nav-label">Settings</span>
+    </div>
+    <div class="sb-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span class="sb-nav-label">Logout</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <span class="topbar-title">Dibyendu AI</span>
+    <div class="topbar-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </div>
+  </div>
+
+  <div class="chat-container">
+    <div class="chat-area" id="chat-area">
+      <div class="welcome" id="welcome">
+        <div class="welcome-orb">✦</div>
+        <div><h2>Hey, I'm <span>Dibyendu AI</span> 👋</h2></div>
+        <p>Ask me anything — or pick a topic below</p>
+        <div class="chip-row">
+          <button class="chip" onclick="sendChip('Analyze my stock portfolio')">📈 Stock Analysis</button>
+          <button class="chip" onclick="sendChip('Give me UI design feedback')">🎨 UI Feedback</button>
+          <button class="chip" onclick="sendChip('Help me with Python code')">🐍 Python Help</button>
+          <button class="chip" onclick="sendChip('What are market trends today?')">📊 Market Trends</button>
+          <button class="chip" onclick="sendChip('Summarize a document for me')">📄 Summarize Doc</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-wrapper">
+      <div id="attach-bar">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        <span id="attach-name"></span>
+        <button onclick="clearFile()">✕</button>
+      </div>
+
+      <div class="input-glow" id="input-glow">
+        <div class="input-box">
+          <textarea id="msg-input" rows="1" placeholder="Ask me anything..."></textarea>
+          <div class="input-row">
+            <button class="pill" onclick="document.getElementById('file-input').click()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              Attach
+            </button>
+            <button class="pill" id="deep-btn" onclick="toggleDeepThink()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+              Deep Think
+            </button>
+            <div class="spacer"></div>
+            <button class="send-btn" onclick="sendMsg()">
+              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="disclaimer">AI can make mistakes. Verify important info.</div>
+    </div>
+  </div>
+</main>
+
+<input type="file" id="file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" onchange="onFile(this)">
+
+<script>
+const chatArea  = document.getElementById('chat-area');
+const welcome   = document.getElementById('welcome');
+const msgInput  = document.getElementById('msg-input');
+const sbHistory = document.getElementById('sb-history');
+const attachBar = document.getElementById('attach-bar');
+const attachNm  = document.getElementById('attach-name');
+const inputGlow = document.getElementById('input-glow');
+const deepBtn   = document.getElementById('deep-btn');
+const sidebar   = document.getElementById('sidebar');
+
+let attachedFile = null;
+let deepThink    = false;
+let sessions     = JSON.parse(localStorage.getItem('dai_v2') || '[]');
+let curId        = null;
+
+// ── Sidebar ──
+function toggleSB() {
+  sidebar.classList.toggle('open');
+}
+
+// ── Input glow animation ──
+msgInput.addEventListener('focus', () => inputGlow.classList.add('active'));
+msgInput.addEventListener('blur',  () => { if (!msgInput.value.trim()) inputGlow.classList.remove('active'); });
+msgInput.addEventListener('input', () => {
+  msgInput.style.height = 'auto';
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 100) + 'px';
+  inputGlow.classList.toggle('active', !!msgInput.value.trim());
+});
+msgInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+});
+
+// ── Deep Think toggle ──
+function toggleDeepThink() {
+  deepThink = !deepThink;
+  deepBtn.style.background    = deepThink ? 'rgba(168,85,247,.15)' : '';
+  deepBtn.style.borderColor   = deepThink ? '#a855f7' : '';
+  deepBtn.style.color         = deepThink ? '#a855f7' : '';
+}
+
+// ── Sessions ──
+function save() { localStorage.setItem('dai_v2', JSON.stringify(sessions)); }
+
+function renderHistory() {
+  sbHistory.innerHTML = '';
+  sessions.slice().reverse().forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'sb-item' + (s.id === curId ? ' active' : '');
+    el.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span class="sb-item-label">${s.title || 'New Chat'}</span>`;
+    el.onclick = () => loadSession(s.id);
+    sbHistory.appendChild(el);
+  });
+}
+
+function loadSession(id) {
+  curId = id;
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  clearMessages();
+  if (s.messages.length > 0) {
+    welcome.style.display = 'none';
+    s.messages.forEach(m => addBubble(m.role, m.content, false));
+  } else {
+    welcome.style.display = 'flex';
+  }
+  renderHistory();
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function newChat() {
+  const s = { id: Date.now(), title: '', messages: [] };
+  sessions.push(s);
+  curId = s.id;
+  save();
+  clearMessages();
+  welcome.style.display = 'flex';
+  renderHistory();
+}
+
+function clearMessages() {
+  Array.from(chatArea.children).forEach(c => {
+    if (c.id !== 'welcome') c.remove();
+  });
+}
+
+function getCur() { return sessions.find(x => x.id === curId); }
+
+// ── Message rendering ──
+function getTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function addBubble(role, text, animate = true) {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  if (!animate) wrap.style.animation = 'none';
+
+  const col = document.createElement('div');
+  col.className = 'msg-col';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+  const meta = document.createElement('div');
+  meta.className = 'msg-meta';
+  meta.textContent = getTime();
+
+  col.appendChild(bubble);
+  col.appendChild(meta);
+
+  if (role === 'ai') {
+    const acts = document.createElement('div');
+    acts.className = 'msg-acts';
+    acts.innerHTML = `
+      <button class="msg-act" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.msg').querySelector('.bubble').innerText)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+      <button class="msg-act" title="Like">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+      </button>`;
+    col.appendChild(acts);
+
+    const orb = document.createElement('div');
+    orb.className = 'ai-orb';
+    wrap.appendChild(orb);
+    wrap.appendChild(col);
+  } else {
+    wrap.appendChild(col);
+  }
+
+  chatArea.appendChild(wrap);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function showTyping() {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ai';
+  wrap.id = 'typing';
+  const orb = document.createElement('div');
+  orb.className = 'ai-orb';
+  const tw = document.createElement('div');
+  tw.className = 'typing-wrap';
+  tw.innerHTML = `<div class="dots"><span></span><span></span><span></span></div><span class="typing-label">Analyzing, please wait...</span>`;
+  wrap.appendChild(orb);
+  wrap.appendChild(tw);
+  chatArea.appendChild(wrap);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing');
+  if (el) el.remove();
+}
+
+// ── Send ──
+async function sendMsg() {
+  const text = msgInput.value.trim();
+  if (!text && !attachedFile) return;
+
+  if (!curId) newChat();
+
+  welcome.style.display = 'none';
+  msgInput.value = '';
+  msgInput.style.height = 'auto';
+  inputGlow.classList.remove('active');
+
+  if (text) addBubble('user', text);
+
+  const s = getCur();
+  if (s) {
+    if (!s.title && text) s.title = text.length > 38 ? text.slice(0, 38) + '…' : text;
+    s.messages.push({ role: 'user', content: text });
+    save();
+    renderHistory();
+  }
+
+  const file = attachedFile;
+  clearFile();
+  showTyping();
+
+  try {
+    let data;
+    if (file) {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('message', text);
+      const res = await fetch('/upload', { method: 'POST', body: fd });
+      data = await res.json();
+    } else {
+      const sysPrompt = deepThink
+        ? 'You are a careful, thorough reasoning assistant. Think step by step, consider multiple angles, and provide a detailed well-structured answer.'
+        : 'You are a helpful assistant.';
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, system: sysPrompt })
+      });
+      data = await res.json();
+    }
+
+    removeTyping();
+    const reply = data.reply || data.response || data.message || 'Sorry, no response received.';
+    addBubble('ai', reply);
+    if (s) { s.messages.push({ role: 'ai', content: reply }); save(); }
+
+  } catch (err) {
+    removeTyping();
+    addBubble('ai', 'Error: Could not reach the server. Please try again.');
+  }
+}
+
+function sendChip(t) { msgInput.value = t; sendMsg(); }
+
+// ── File ──
+function onFile(input) {
+  const f = input.files[0];
+  if (!f) return;
+  attachedFile = f;
+  attachNm.textContent = f.name;
+  attachBar.style.display = 'flex';
+  input.value = '';
+}
+
+function clearFile() {
+  attachedFile = null;
+  attachBar.style.display = 'none';
+  attachNm.textContent = '';
+}
+
+// ── Init ──
+if (sessions.length > 0) {
+  loadSession(sessions[sessions.length - 1].id);
+} else {
+  newChat();
+}
+</script>
+</body>
+</html>

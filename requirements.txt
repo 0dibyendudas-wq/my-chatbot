@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+groq
+python-dotenv
+python-docx
+openpyxl
+python-multipart
