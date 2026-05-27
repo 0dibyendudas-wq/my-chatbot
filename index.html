@@ -10,7 +10,10 @@
 
 body{
   font-family:'DM Sans',sans-serif;
-  height:100vh;overflow:hidden;display:flex;
+  min-height:100dvh;
+  overflow-x:hidden;
+  overflow-y:auto;
+  display:flex;
   background:#f8fafc;
 }
 
@@ -120,8 +123,14 @@ body::before{
 
 /* MAIN */
 .main{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  position:relative;z-index:5;overflow:hidden;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+  z-index:5;
+  min-height:100dvh;
+  overflow:hidden;
 }
 
 .topbar{
@@ -145,8 +154,14 @@ body::before{
 .topbar-menu-btn:hover{color:#8b5cf6;}
 
 .chat-container{
-  flex:1;width:100%;max-width:700px;
-  display:flex;flex-direction:column;overflow:hidden;padding:0 16px;
+  flex:1;
+  width:100%;
+  max-width:700px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  padding:0 16px;
+  padding-bottom:20px;
 }
 
 .chat-area{
@@ -226,7 +241,9 @@ body::before{
 .typing-label{font-size:12px;color:#94a3b8;}
 
 /* INPUT */
-.input-wrapper{padding:0 0 18px;}
+.input-wrapper{
+  padding:0 0 calc(18px + env(safe-area-inset-bottom));
+}
 
 .input-glow{
   border-radius:20px;padding:1.5px;
@@ -340,7 +357,27 @@ body::before{
 #sidebar-overlay.active{display:block;}
 
 /* MOBILE */
+/* MOBILE */
 @media (max-width:768px){
+
+body{
+min-height:100dvh;
+}
+
+.chat-container{
+padding-bottom:30px;
+}
+
+.chat-area{
+padding-bottom:20px;
+}
+
+.topbar-menu-btn{
+display:flex;
+}
+
+}
+
   .topbar-menu-btn{display:flex;}
 
   #sidebar{
@@ -349,7 +386,7 @@ body::before{
     top:0;bottom:0;
     width:220px !important;
     min-width:220px;
-    height:100vh;
+    height:100dvh;
     z-index:100;
     box-shadow:20px 0 60px rgba(0,0,0,.08);
     background:rgba(255,255,255,.97);
