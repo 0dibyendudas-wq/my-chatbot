@@ -11,16 +11,16 @@
 body{
   font-family:'DM Sans',sans-serif;
   height:100vh;overflow:hidden;display:flex;
-  background:#eef0f8;
+  background:#f8fafc;
 }
 
 body::before{
   content:'';position:fixed;inset:0;
   background:
-    radial-gradient(ellipse 60% 50% at 15% 20%,rgba(255,182,220,.38) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 60% at 85% 10%,rgba(180,200,255,.32) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 40% at 60% 85%,rgba(200,230,255,.22) 0%,transparent 60%),
-    #eef0f8;
+    radial-gradient(ellipse 60% 50% at 15% 20%,rgba(168,85,247,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 10%,rgba(99,102,241,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 60% 85%,rgba(139,92,246,.08) 0%,transparent 60%),
+    #f8fafc;
   z-index:0;
 }
 
@@ -28,12 +28,12 @@ body::before{
 #sidebar{
   width:56px;
   min-width:56px;
-  background:rgba(255,255,255,.55);
-  backdrop-filter:blur(20px);
-  border-right:1px solid rgba(255,255,255,.7);
+  background:rgba(255,255,255,.65);
+  backdrop-filter:blur(24px);
+  border-right:1px solid rgba(226,232,240,.8);
   display:flex;flex-direction:column;align-items:flex-start;
   padding:12px 0;gap:2px;
-  position:relative;z-index:20;flex-shrink:0;
+  position:relative;z-index:100;flex-shrink:0;
   transition:width .3s cubic-bezier(.4,0,.2,1);
   overflow:hidden;
 }
@@ -47,7 +47,7 @@ body::before{
   color:#64748b;margin:0 10px 6px;flex-shrink:0;
   transition:background .15s,color .15s;
 }
-.sb-toggle:hover{background:rgba(255,255,255,.8);color:#a855f7;}
+.sb-toggle:hover{background:rgba(255,255,255,.8);color:#8b5cf6;}
 
 /* logo row */
 .sb-logo-row{
@@ -56,7 +56,7 @@ body::before{
 }
 .sb-logo{
   width:36px;height:36px;min-width:36px;border-radius:12px;
-  background:linear-gradient(135deg,#f472b6,#a855f7);
+  background:linear-gradient(135deg,#8b5cf6,#6366f1);
   display:flex;align-items:center;justify-content:center;
   color:#fff;font-weight:700;font-size:15px;flex-shrink:0;
 }
@@ -72,13 +72,13 @@ body::before{
   display:flex;align-items:center;gap:8px;
   width:200px;margin:0 10px 6px;padding:8px 10px;
   border-radius:10px;
-  background:rgba(168,85,247,.1);
-  border:1px solid rgba(168,85,247,.25);
+  background:rgba(139,92,246,.1);
+  border:1px solid rgba(139,92,246,.25);
   cursor:pointer;font-family:'DM Sans',sans-serif;
-  font-size:13px;font-weight:500;color:#a855f7;
+  font-size:13px;font-weight:500;color:#7c3aed;
   white-space:nowrap;transition:background .15s;
 }
-.sb-new:hover{background:rgba(168,85,247,.18);}
+.sb-new:hover{background:rgba(139,92,246,.18);}
 .sb-new svg{flex-shrink:0;}
 .sb-new-label{opacity:0;transition:opacity .2s;}
 #sidebar.open .sb-new-label{opacity:1;}
@@ -104,8 +104,8 @@ body::before{
   color:#475569;font-size:13px;
   transition:background .12s,color .12s;
 }
-.sb-item:hover{background:rgba(255,255,255,.75);color:#a855f7;}
-.sb-item.active{background:rgba(168,85,247,.1);color:#a855f7;font-weight:500;}
+.sb-item:hover{background:rgba(255,255,255,.75);color:#8b5cf6;}
+.sb-item.active{background:rgba(139,92,246,.1);color:#7c3aed;font-weight:500;}
 .sb-item svg{flex-shrink:0;width:14px;height:14px;}
 .sb-item-label{opacity:0;transition:opacity .2s;overflow:hidden;text-overflow:ellipsis;}
 #sidebar.open .sb-item-label{opacity:1;}
@@ -122,7 +122,7 @@ body::before{
   white-space:nowrap;overflow:hidden;
   transition:background .15s,color .15s;
 }
-.sb-nav-item:hover{background:rgba(255,255,255,.8);color:#a855f7;}
+.sb-nav-item:hover{background:rgba(255,255,255,.8);color:#8b5cf6;}
 .sb-nav-item svg{flex-shrink:0;width:17px;height:17px;}
 .sb-nav-label{opacity:0;transition:opacity .2s;}
 #sidebar.open .sb-nav-label{opacity:1;}
@@ -146,7 +146,17 @@ body::before{
   justify-content:center;cursor:pointer;color:#64748b;
   transition:color .15s;
 }
-.topbar-btn:hover{color:#a855f7;}
+.topbar-btn:hover{color:#8b5cf6;}
+
+/* topbar menu button for mobile */
+.topbar-menu-btn{
+  display:none;width:34px;height:34px;border-radius:10px;
+  background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);
+  backdrop-filter:blur(10px);align-items:center;
+  justify-content:center;cursor:pointer;color:#64748b;
+  transition:color .15s;
+}
+.topbar-menu-btn:hover{color:#8b5cf6;}
 
 /* chat container */
 .chat-container{
@@ -170,14 +180,14 @@ body::before{
 }
 .welcome-orb{
   width:72px;height:72px;border-radius:50%;
-  background:conic-gradient(from 180deg,#ff6eb4,#a78bfa,#60a5fa,#34d399,#ff6eb4);
+  background:conic-gradient(from 180deg,#8b5cf6,#818cf8,#60a5fa,#c084fc,#8b5cf6);
   display:flex;align-items:center;justify-content:center;font-size:26px;
-  box-shadow:0 8px 32px rgba(167,139,250,.3);
+  box-shadow:0 8px 32px rgba(139,92,246,.25);
   animation:hue 8s linear infinite;
 }
 @keyframes hue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
 .welcome h2{font-size:22px;font-weight:600;color:#1e293b;}
-.welcome h2 span{background:linear-gradient(90deg,#ec4899,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.welcome h2 span{background:linear-gradient(90deg,#8b5cf6,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .welcome p{font-size:14px;color:#64748b;}
 .chip-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px;}
 .chip{
@@ -187,7 +197,7 @@ body::before{
   font-size:12px;color:#475569;cursor:pointer;
   font-family:'DM Sans',sans-serif;transition:all .15s;
 }
-.chip:hover{background:rgba(255,255,255,.95);border-color:#c4b5fd;color:#a855f7;transform:translateY(-1px);}
+.chip:hover{background:rgba(255,255,255,.95);border-color:#c4b5fd;color:#7c3aed;transform:translateY(-1px);}
 
 /* messages */
 .msg{display:flex;gap:12px;align-items:flex-end;animation:fadeUp .22s ease;}
@@ -196,9 +206,9 @@ body::before{
 
 .ai-orb{
   width:34px;height:34px;min-width:34px;border-radius:50%;
-  background:conic-gradient(from 180deg,#ff6eb4,#a78bfa,#60a5fa,#34d399,#ff6eb4);
+  background:conic-gradient(from 180deg,#8b5cf6,#818cf8,#60a5fa,#c084fc,#8b5cf6);
   animation:hue 8s linear infinite;
-  box-shadow:0 3px 12px rgba(167,139,250,.3);flex-shrink:0;
+  box-shadow:0 3px 12px rgba(139,92,246,.25);flex-shrink:0;
 }
 
 .msg-col{display:flex;flex-direction:column;gap:4px;max-width:72%;}
@@ -208,25 +218,25 @@ body::before{
 .msg.ai .bubble{
   background:rgba(255,255,255,.78);backdrop-filter:blur(16px);
   border:1px solid rgba(255,255,255,.9);border-bottom-left-radius:6px;
-  color:#1e293b;box-shadow:0 2px 16px rgba(0,0,0,.06);
+  color:#1e293b;box-shadow:0 2px 16px rgba(0,0,0,.04);
 }
 .msg.user .bubble{
-  background:linear-gradient(135deg,#f472b6,#ec4899);
+  background:linear-gradient(135deg,#7c3aed,#6366f1);
   border-bottom-right-radius:6px;color:#fff;
-  box-shadow:0 4px 18px rgba(236,72,153,.35);
+  box-shadow:0 4px 18px rgba(124,58,237,.3);
 }
 
 .msg-meta{font-size:11px;color:#94a3b8;padding:0 4px;}
 .msg-acts{display:flex;gap:6px;padding:0 4px;}
 .msg-act{background:none;border:none;cursor:pointer;color:#94a3b8;padding:2px;transition:color .12s;}
-.msg-act:hover{color:#a855f7;}
+.msg-act:hover{color:#8b5cf6;}
 
 /* typing */
 .typing-wrap{display:flex;align-items:center;gap:10px;}
 .dots{display:flex;gap:4px;}
 .dots span{
   width:6px;height:6px;border-radius:50%;
-  background:linear-gradient(135deg,#f472b6,#a855f7);
+  background:linear-gradient(135deg,#8b5cf6,#6366f1);
   animation:bounce 1.2s infinite;
 }
 .dots span:nth-child(2){animation-delay:.2s;}
@@ -244,10 +254,10 @@ body::before{
   transition:background .3s;
 }
 .input-glow.active{
-  background:linear-gradient(90deg,#ef4444,#a855f7,#818cf8,#ef4444);
+  background:linear-gradient(90deg,#7c3aed,#a855f7,#6366f1,#7c3aed);
   background-size:300% 100%;
   animation:glow 2.5s ease infinite;
-  box-shadow:0 0 24px rgba(168,85,247,.2);
+  box-shadow:0 0 24px rgba(139,92,246,.2);
 }
 @keyframes glow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
@@ -272,26 +282,26 @@ body::before{
   font-size:12px;font-weight:500;color:#475569;cursor:pointer;
   font-family:'DM Sans',sans-serif;transition:all .15s;
 }
-.pill:hover{background:rgba(255,255,255,.95);border-color:#c4b5fd;color:#a855f7;}
+.pill:hover{background:rgba(255,255,255,.95);border-color:#c4b5fd;color:#7c3aed;}
 .pill svg{width:13px;height:13px;}
 .spacer{flex:1;}
 
-/* RED + PURPLE gradient send button */
+/* PURPLE + INDIGO gradient send button */
 .send-btn{
   display:flex;align-items:center;gap:6px;
   padding:8px 20px;border-radius:20px;
-  background:linear-gradient(135deg,#ef4444 0%,#a855f7 100%);
+  background:linear-gradient(135deg,#8b5cf6 0%,#6366f1 100%);
   border:none;color:#fff;font-size:13px;font-weight:600;
   font-family:'DM Sans',sans-serif;cursor:pointer;
-  box-shadow:0 4px 16px rgba(168,85,247,.4);
+  box-shadow:0 4px 16px rgba(139,92,246,.3);
   transition:transform .1s,box-shadow .15s;
   animation:btnPulse 3s ease infinite;
 }
 @keyframes btnPulse{
-  0%,100%{box-shadow:0 4px 16px rgba(239,68,68,.4);}
-  50%{box-shadow:0 4px 22px rgba(168,85,247,.55);}
+  0%,100%{box-shadow:0 4px 16px rgba(139,92,246,.35);}
+  50%{box-shadow:0 4px 22px rgba(99,102,241,.5);}
 }
-.send-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(168,85,247,.55);}
+.send-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(99,102,241,.45);}
 .send-btn:active{transform:scale(.95);}
 .send-btn svg{width:14px;height:14px;fill:#fff;}
 
@@ -300,12 +310,119 @@ body::before{
 /* attach bar */
 #attach-bar{
   display:none;align-items:center;gap:8px;
-  padding:6px 12px;background:rgba(244,114,182,.1);
-  border:1px solid rgba(244,114,182,.3);border-radius:10px;
-  font-size:12px;color:#ec4899;margin-bottom:8px;
+  padding:6px 12px;background:rgba(139,92,246,.1);
+  border:1px solid rgba(139,92,246,.3);border-radius:10px;
+  font-size:12px;color:#7c3aed;margin-bottom:8px;
 }
-#attach-bar button{margin-left:auto;background:none;border:none;cursor:pointer;color:#ec4899;font-size:14px;}
+#attach-bar button{margin-left:auto;background:none;border:none;cursor:pointer;color:#7c3aed;font-size:14px;}
 #file-input{display:none;}
+
+/* ── DEEP THINK STYLES ── */
+.think-section{
+  margin-bottom:12px;
+  border-left:3px solid #8b5cf6;
+  background:rgba(139,92,246,.04);
+  border-radius:4px 8px 8px 4px;
+  overflow:hidden;
+}
+.think-toggle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  padding:8px 12px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:600;
+  color:#7c3aed;
+  font-family:'DM Sans',sans-serif;
+  text-align:left;
+}
+.think-brain-icon{
+  width:14px;height:14px;
+  stroke:#7c3aed;
+}
+.think-chevron{
+  width:12px;height:12px;
+  margin-left:auto;
+  transition:transform 0.2s;
+  stroke:#7c3aed;
+}
+.think-content{
+  padding:0 12px 10px 12px;
+  font-size:12.5px;
+  color:#64748b;
+  line-height:1.5;
+  border-top:1px solid rgba(139,92,246,.08);
+}
+.think-content.collapsed{display:none;}
+.think-toggle.active .think-chevron{transform:rotate(180deg);}
+
+/* ── VOICE RECORDER STYLES ── */
+.pill.recording{
+  background:rgba(239,68,68,.12);
+  border-color:#ef4444;
+  color:#ef4444;
+  animation:pulseRed 1.5s infinite;
+}
+@keyframes pulseRed{
+  0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3);}
+  50%{box-shadow:0 0 0 8px rgba(239,68,68,0);}
+}
+
+/* ── MOBILE RESPONSIVE ── */
+#sidebar-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.25);
+  backdrop-filter:blur(4px);
+  z-index:90;
+}
+#sidebar-overlay.active{display:block;}
+
+@media (max-width:768px){
+  .topbar-menu-btn{display:flex;}
+  
+  #sidebar{
+    position:fixed;
+    left:-220px;
+    top:0;
+    bottom:0;
+    width:220px;
+    min-width:220px;
+    height:100vh;
+    z-index:100;
+    box-shadow:20px 0 30px rgba(0,0,0,0.05);
+    background:rgba(255,255,255,0.96);
+  }
+  #sidebar.open{
+    left:0;
+  }
+  #sidebar:not(.open){
+    width:0;
+    min-width:0;
+    padding:12px 0;
+    border-right:none;
+  }
+  
+  /* hamburger and logo inside drawer */
+  .sb-toggle{display:flex;}
+  
+  .chat-container{
+    width:100%;
+    padding:0 12px;
+  }
+  
+  .welcome h2{font-size:20px;}
+  .welcome p{font-size:13px;}
+  .chip{
+    font-size:11px;
+    padding:6px 12px;
+  }
+}
 </style>
 </head>
 <body>
@@ -340,7 +457,10 @@ body::before{
   <!-- nav -->
   <div class="sb-nav">
     <div class="sb-nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
       <span class="sb-nav-label">Settings</span>
     </div>
     <div class="sb-nav-item">
@@ -349,10 +469,16 @@ body::before{
     </div>
   </div>
 </aside>
+<div id="sidebar-overlay" onclick="toggleSB()"></div>
 
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
+    <button class="topbar-menu-btn" onclick="toggleSB()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
     <span class="topbar-title">Dibyendu AI</span>
     <div class="topbar-btn">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -387,12 +513,17 @@ body::before{
           <textarea id="msg-input" rows="1" placeholder="Ask me anything..."></textarea>
           <div class="input-row">
             <button class="pill" onclick="document.getElementById('file-input').click()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="margin-right:2px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
               Attach
             </button>
             <button class="pill" id="deep-btn" onclick="toggleDeepThink()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
               Deep Think
+            </button>
+            <button class="pill" id="mic-btn" onclick="toggleMic()">
+              <svg id="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              <span id="mic-label">Voice</span>
             </button>
             <div class="spacer"></div>
             <button class="send-btn" onclick="sendMsg()">
@@ -419,15 +550,24 @@ const attachNm  = document.getElementById('attach-name');
 const inputGlow = document.getElementById('input-glow');
 const deepBtn   = document.getElementById('deep-btn');
 const sidebar   = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
 
 let attachedFile = null;
 let deepThink    = false;
 let sessions     = JSON.parse(localStorage.getItem('dai_v2') || '[]');
 let curId        = null;
 
+// ── Voice Recorder Variables ──
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+let micTimer = null;
+let micSecs = 0;
+
 // ── Sidebar ──
 function toggleSB() {
   sidebar.classList.toggle('open');
+  sidebarOverlay.classList.toggle('active', sidebar.classList.contains('open'));
 }
 
 // ── Input glow animation ──
@@ -445,9 +585,64 @@ msgInput.addEventListener('keydown', e => {
 // ── Deep Think toggle ──
 function toggleDeepThink() {
   deepThink = !deepThink;
-  deepBtn.style.background    = deepThink ? 'rgba(168,85,247,.15)' : '';
-  deepBtn.style.borderColor   = deepThink ? '#a855f7' : '';
-  deepBtn.style.color         = deepThink ? '#a855f7' : '';
+  deepBtn.style.background    = deepThink ? 'rgba(139,92,246,.15)' : '';
+  deepBtn.style.borderColor   = deepThink ? '#8b5cf6' : '';
+  deepBtn.style.color         = deepThink ? '#8b5cf6' : '';
+}
+
+// ── Voice Recorder ──
+async function toggleMic() {
+  const micBtn = document.getElementById('mic-btn');
+  const micIcon = document.getElementById('mic-icon');
+  const micLabel = document.getElementById('mic-label');
+  
+  if (isRecording) {
+    // Stop recording
+    mediaRecorder.stop();
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micLabel.textContent = 'Voice';
+    clearInterval(micTimer);
+    return;
+  }
+  
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+    
+    mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const file = new File([audioBlob], 'voice-message.webm', { type: 'audio/webm' });
+      
+      attachedFile = file;
+      attachNm.textContent = 'Voice Message (Recorded)';
+      attachBar.style.display = 'flex';
+      
+      // Stop all tracks on the stream to release the mic
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    mediaRecorder.start();
+    isRecording = true;
+    micBtn.classList.add('recording');
+    
+    micSecs = 0;
+    micLabel.textContent = '00:00';
+    micTimer = setInterval(() => {
+      micSecs++;
+      const mins = String(Math.floor(micSecs / 60)).padStart(2, '0');
+      const secs = String(micSecs % 60).padStart(2, '0');
+      micLabel.textContent = `${mins}:${secs}`;
+    }, 1000);
+    
+  } catch (err) {
+    alert('Could not access microphone: ' + err.message);
+  }
 }
 
 // ── Sessions ──
@@ -516,7 +711,48 @@ function addBubble(role, text, animate = true) {
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+  if (role === 'ai') {
+    // Parse think tags
+    let thinkContent = '';
+    let finalContent = text;
+    
+    const thinkStart = text.indexOf('<think>');
+    const thinkEnd = text.indexOf('</think>');
+    
+    if (thinkStart !== -1 && thinkEnd !== -1 && thinkEnd > thinkStart) {
+      thinkContent = text.substring(thinkStart + 7, thinkEnd).trim();
+      finalContent = text.substring(thinkEnd + 8).trim();
+    } else if (thinkStart !== -1) {
+      thinkContent = text.substring(thinkStart + 7).trim();
+      finalContent = '';
+    }
+    
+    let html = '';
+    if (thinkContent) {
+      const uniqueId = 'think-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+      html += `
+        <div class="think-section">
+          <button class="think-toggle" onclick="this.classList.toggle('active'); document.getElementById('${uniqueId}').classList.toggle('collapsed')">
+            <svg class="think-brain-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-3.12 3 3 0 0 1 0-4.88 2.5 2.5 0 0 1 0-3.12A2.5 2.5 0 0 1 9.5 2Z"/>
+              <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-3.12 3 3 0 0 0 0-4.88 2.5 2.5 0 0 0 0-3.12A2.5 2.5 0 0 0 14.5 2Z"/>
+            </svg>
+            <span>Thinking Process</span>
+            <svg class="think-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="${uniqueId}" class="think-content collapsed">
+            ${thinkContent.replace(/\n/g, '<br>')}
+          </div>
+        </div>
+      `;
+    }
+    
+    html += `<div class="bubble-text">${finalContent.replace(/\n/g, '<br>')}</div>`;
+    bubble.innerHTML = html;
+  } else {
+    bubble.innerHTML = text.replace(/\n/g, '<br>');
+  }
 
   const meta = document.createElement('div');
   meta.className = 'msg-meta';
@@ -529,7 +765,7 @@ function addBubble(role, text, animate = true) {
     const acts = document.createElement('div');
     acts.className = 'msg-acts';
     acts.innerHTML = `
-      <button class="msg-act" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.msg').querySelector('.bubble').innerText)">
+      <button class="msg-act" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.msg').querySelector('.bubble-text')?.innerText || this.closest('.msg').querySelector('.bubble').innerText)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       </button>
       <button class="msg-act" title="Like">
@@ -581,12 +817,21 @@ async function sendMsg() {
   msgInput.style.height = 'auto';
   inputGlow.classList.remove('active');
 
-  if (text) addBubble('user', text);
+  if (text) {
+    addBubble('user', text);
+  } else if (attachedFile) {
+    if (attachedFile.type.startsWith('audio/')) {
+      addBubble('user', '🎤 Sent a voice message');
+    } else {
+      addBubble('user', `📎 Attached file: ${attachedFile.name}`);
+    }
+  }
 
   const s = getCur();
   if (s) {
-    if (!s.title && text) s.title = text.length > 38 ? text.slice(0, 38) + '…' : text;
-    s.messages.push({ role: 'user', content: text });
+    const displayMsg = text || (attachedFile && attachedFile.type.startsWith('audio/') ? '🎤 Sent a voice message' : `📎 Attached file: ${attachedFile.name}`);
+    if (!s.title) s.title = displayMsg.length > 38 ? displayMsg.slice(0, 38) + '…' : displayMsg;
+    s.messages.push({ role: 'user', content: displayMsg });
     save();
     renderHistory();
   }
@@ -597,16 +842,27 @@ async function sendMsg() {
 
   try {
     let data;
+    const sysPrompt = deepThink
+      ? `You are a careful, thorough reasoning assistant. Think step by step, consider multiple angles, and explain your reasoning in detail.
+IMPORTANT: You MUST write your step-by-step thinking/reasoning process inside a <think>...</think> block at the very beginning of your response.
+After the closing </think> tag, write your final response to the user.
+Example format:
+<think>
+1. Identify the core question...
+2. Analyze the requirements...
+3. Draft the solution...
+</think>
+Here is my final answer...`
+      : 'You are a helpful assistant.';
+
     if (file) {
       const fd = new FormData();
       fd.append('file', file);
       fd.append('message', text);
+      fd.append('system', sysPrompt);
       const res = await fetch('/upload', { method: 'POST', body: fd });
       data = await res.json();
     } else {
-      const sysPrompt = deepThink
-        ? 'You are a careful, thorough reasoning assistant. Think step by step, consider multiple angles, and provide a detailed well-structured answer.'
-        : 'You are a helpful assistant.';
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -617,8 +873,14 @@ async function sendMsg() {
 
     removeTyping();
     const reply = data.reply || data.response || data.message || 'Sorry, no response received.';
-    addBubble('ai', reply);
-    if (s) { s.messages.push({ role: 'ai', content: reply }); save(); }
+    
+    let renderedReply = reply;
+    if (data.transcribed) {
+      renderedReply = `🎤 *Transcribed Voice:* "${data.transcribed}"<br><br>${reply}`;
+    }
+    
+    addBubble('ai', renderedReply);
+    if (s) { s.messages.push({ role: 'ai', content: renderedReply }); save(); }
 
   } catch (err) {
     removeTyping();
