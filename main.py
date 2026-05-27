@@ -66,8 +66,11 @@ async def read_root():
 @app.post("/chat")
 async def chat(msg: Message):
     try:
+        is_deep = "step by step" in msg.system.lower()
+        model = "deepseek-r1-distill-llama-70b" if is_deep else "llama-3.3-70b-versatile"
+        
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model=model,
             messages=[
                 {"role": "system", "content": msg.system},
                 {"role": "user", "content": msg.message}
