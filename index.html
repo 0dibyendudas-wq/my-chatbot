@@ -820,24 +820,22 @@ function addBubble(role, text, fileData=null, animate=true) {
     html += `<div class="bubble-text">${finalContent.replace(/\n/g,'<br>')}</div>`;
     bubble.innerHTML = html;
   } else {
-    if (text.startsWith('data:image')) {
+if (text.startsWith('data:image')) {
 
   bubble.innerHTML = `
     <img 
-  src="${text}"
-  onclick="openImgModal('${text}')"
-  style="
-    max-width:240px;
-    border-radius:14px;
-    display:block;
-    cursor:pointer;
-  ">
-    style="
-      max-width:240px;
-      border-radius:14px;
-      display:block;
-    ">
+      src="${text}"
+      onclick="openImgModal('${text}')"
+      style="
+        max-width:240px;
+        border-radius:14px;
+        display:block;
+        cursor:pointer;
+      ">
   `;
+
+}
+
 else if (text.startsWith('AUDIO:')) {
 
   const audioUrl = text.replace('AUDIO:', '');
@@ -849,7 +847,8 @@ else if (text.startsWith('AUDIO:')) {
   `;
 
 }
-} else if (text.startsWith('FILE:')) {
+
+else if (text.startsWith('FILE:')) {
 
   const parts = text.split('|');
   const fileName = parts[0].replace('FILE:', '');
@@ -869,9 +868,13 @@ else if (text.startsWith('AUDIO:')) {
     </a>
   `;
 
-} else {
+}
+
+else {
 
   bubble.innerHTML = text.replace(/\n/g,'<br>');
+
+}
 
 }
   }
