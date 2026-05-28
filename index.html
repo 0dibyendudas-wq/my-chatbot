@@ -136,6 +136,9 @@ body::before{
 .topbar{
   width:100%;display:flex;align-items:center;
   justify-content:space-between;padding:14px 22px;
+  position:sticky;top:0;z-index:10;
+  background:rgba(248,250,252,.85);
+  backdrop-filter:blur(12px);
 }
 .topbar-title{font-size:15px;font-weight:600;color:#1e293b;}
 .topbar-btn{
@@ -243,6 +246,9 @@ body::before{
 /* INPUT */
 .input-wrapper{
   padding:0 0 calc(18px + env(safe-area-inset-bottom));
+  position:sticky;
+  bottom:0;
+  z-index:10;
 }
 
 .input-glow{
