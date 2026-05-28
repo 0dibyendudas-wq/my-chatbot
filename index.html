@@ -633,7 +633,7 @@ body::before{
   </div>
 </main>
 
-<input type="file" id="file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" onchange="onFile(this)">
+<input type="file" id="file-input" accept="image/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" onchange="onFile(this)" >
 <!-- IMAGE MODAL -->
 <div id="img-modal">
   <span id="img-close">✕</span>
@@ -924,92 +924,189 @@ function removeTyping() {
   if (el) el.remove();
 }
 
+```js id="newsendmsg"
 async function sendMsg() {
+
   const text = msgInput.value.trim();
+
   if (!text && !attachedFile) return;
+
   if (!curId) newChat();
 
   welcome.style.display = 'none';
+
   msgInput.value = '';
+
   msgInput.style.height = 'auto';
+
   inputGlow.classList.remove('active');
 
   let displayMsg = text;
 
-if (attachedFile) {
-
   // IMAGE
-if (attachedFile.type.startsWith('image/')) {
+  if (attachedFile?.type.startsWith('image/')) {
 
-  // image code
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+
+      displayMsg = e.target.result;
+
+      processMessage(displayMsg);
+
+    };
+
+    reader.readAsDataURL(attachedFile);
+
+    return;
+
+  }
+
+  // AUDIO
+  else if (attachedFile?.type.startsWith('audio/')) {
+
+    const audioUrl = URL.createObjectURL(attachedFile);
+
+    displayMsg = `AUDIO:${audioUrl}`;
+
+  }
+
+  // OTHER FILES
+  else if (attachedFile) {
+
+    const fileUrl = URL.createObjectURL(attachedFile);
+
+    displayMsg = `FILE:${attachedFile.name}|${fileUrl}`;
+
+  }
+
+  processMessage(displayMsg);
 
 }
 
-// AUDIO
-else if (attachedFile.type.startsWith('audio/')) {
+async function processMessage(displayMsg) {
 
-  const audioUrl = URL.createObjectURL(attachedFile);
-
-  displayMsg = `AUDIO:${audioUrl}`;
-
-}
-
-// OTHER FILES
-else {
-
-  const fileUrl = URL.createObjectURL(attachedFile);
-
-  displayMsg = `FILE:${attachedFile.name}|${fileUrl}`;
-
-}
-
-}
   addBubble('user', displayMsg);
 
   const s = getCur();
+
   if (s) {
-    if (!s.title) s.title = displayMsg.length > 38 ? displayMsg.slice(0,38)+'…' : displayMsg;
-    s.messages.push({ role:'user', content: displayMsg });
-    save(); renderHistory();
+
+    if (!s.title) {
+
+      s.title =
+        displayMsg.length > 38
+          ? displayMsg.slice(0,38) + '…'
+          : displayMsg;
+
+    }
+
+    s.messages.push({
+      role:'user',
+      content:displayMsg
+    });
+
+    save();
+
+    renderHistory();
+
   }
 
   const file = attachedFile;
-  clearFile();
+
+// clear UI only attachBar.style.display = 'none'; attachNm.textContent = ''; attachedFile = null;
+
   showTyping();
 
   try {
+
     let data;
+
     const sysPrompt = deepThink
       ? `You are a careful, thorough reasoning assistant. Think step by step and explain your reasoning.
 IMPORTANT: Write your thinking inside <think>...</think> at the start, then write your final answer after </think>.`
       : 'You are a helpful assistant.';
 
     if (file) {
+
       const fd = new FormData();
+
       fd.append('file', file);
-      fd.append('message', text);
+
+      fd.append('message', displayMsg);
+
       fd.append('system', sysPrompt);
-      const res = await fetch('/upload', { method:'POST', body:fd });
-      data = await res.json();
-    } else {
-      const res = await fetch('/chat', {
+
+      const res = await fetch('/upload', {
         method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ message:text, system:sysPrompt })
+        body:fd
       });
+
       data = await res.json();
+
+    }
+
+    else {
+
+      const res = await fetch('/chat', {
+
+        method:'POST',
+
+        headers:{
+          'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify({
+          message:displayMsg,
+          system:sysPrompt
+        })
+
+      });
+
+      data = await res.json();
+
     }
 
     removeTyping();
-    let reply = data.reply || data.response || data.message || 'Sorry, no response received.';
-    if (data.transcribed) reply = `🎤 "${data.transcribed}"\n\n${reply}`;
-    addBubble('ai', reply);
-    if (s) { s.messages.push({ role:'ai', content:reply }); save(); }
 
-  } catch(err) {
-    removeTyping();
-    addBubble('ai', 'Error: Could not reach the server. Please try again.');
+    let reply =
+      data.reply ||
+      data.response ||
+      data.message ||
+      'Sorry, no response received.';
+
+    if (data.transcribed) {
+
+      reply = `🎤 "${data.transcribed}"\n\n${reply}`;
+
+    }
+
+    addBubble('ai', reply);
+
+    if (s) {
+
+      s.messages.push({
+        role:'ai',
+        content:reply
+      });
+
+      save();
+
+    }
+
   }
+
+  catch(err) {
+
+    removeTyping();
+
+    addBubble(
+      'ai',
+      'Error: Could not reach the server.'
+    );
+
+  }
+
 }
 
 function sendChip(t) { msgInput.value = t; sendMsg(); }
