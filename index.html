@@ -40,7 +40,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .sb-nav-label{opacity:0;transition:opacity .25s;}
 #sidebar.open .sb-nav-label{opacity:1;}
 .main{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:5;height:100dvh;overflow:hidden;}
-.topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 22px;position:sticky;top:0;z-index:10;background:rgba(248,250,252,.85);backdrop-filter:blur(12px);}
+.topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 22px;position:sticky;top:0;z-index:10;background:transparent;}
 .topbar-title{font-size:15px;font-weight:600;color:#1e293b;}
 .topbar-btn{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#64748b;transition:color .15s;}
 .topbar-btn:hover{color:#8b5cf6;}
@@ -613,11 +613,16 @@ async function sendMsg() {
   if (attachedFile) {
     if (attachedFile.type.startsWith('image/')) {
       const reader = new FileReader();
+      const fileToSend = attachedFile;
+      // Clear attach bar immediately
+      attachBar.style.display = 'none';
+      attachNm.textContent = '';
+      attachedFile = null;
       reader.onload = function(e) {
         displayMsg = e.target.result;
-        processMessage(displayMsg, userText);
+        processMessage(displayMsg, userText, fileToSend);
       };
-      reader.readAsDataURL(attachedFile);
+      reader.readAsDataURL(fileToSend);
       return;
     } else if (attachedFile.type.startsWith('audio/')) {
       const audioUrl = URL.createObjectURL(attachedFile);
@@ -628,10 +633,16 @@ async function sendMsg() {
     }
   }
 
-  processMessage(displayMsg, userText);
+  // Clear attach bar immediately before async processing
+  attachBar.style.display = 'none';
+  attachNm.textContent = '';
+  const fileToSend = attachedFile;
+  attachedFile = null;
+
+  processMessage(displayMsg, userText, fileToSend);
 }
 
-async function processMessage(displayMsg, userText) {
+async function processMessage(displayMsg, userText, file = null) {
   addBubble('user', displayMsg);
 
   const s = getCur();
@@ -644,11 +655,6 @@ async function processMessage(displayMsg, userText) {
     save();
     renderHistory();
   }
-
-  const file = attachedFile;
-  attachBar.style.display = 'none';
-  attachNm.textContent    = '';
-  attachedFile            = null;
 
   showTyping();
 
