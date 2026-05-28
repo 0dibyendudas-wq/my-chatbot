@@ -66,7 +66,84 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .msg.user .msg-col{align-items:flex-end;}
 .bubble{padding:12px 16px;border-radius:20px;font-size:14px;line-height:1.6;}
 .msg.ai .bubble{background:rgba(255,255,255,.85);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.9);border-bottom-left-radius:6px;color:#1e293b;box-shadow:0 2px 16px rgba(0,0,0,.04);}
+/* Default user text bubble — purple gradient */
 .msg.user .bubble{background:linear-gradient(135deg,#7c3aed,#6366f1);border-bottom-right-radius:6px;color:#fff;box-shadow:0 4px 18px rgba(124,58,237,.3);}
+
+/* ── Media bubbles: no blue background ── */
+.bubble.media-bubble{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Uploaded image */
+.media-bubble .uploaded-img{
+  display: block;
+  max-width: 260px;
+  max-height: 220px;
+  width: 100%;
+  border-radius: 18px;
+  object-fit: cover;
+  cursor: pointer;
+  box-shadow: 0 6px 28px rgba(0,0,0,.14);
+  transition: transform .18s, box-shadow .18s;
+  border: 2px solid rgba(255,255,255,.85);
+}
+.media-bubble .uploaded-img:hover{
+  transform: scale(1.025);
+  box-shadow: 0 10px 36px rgba(0,0,0,.2);
+}
+
+/* Audio player */
+.media-bubble .audio-wrap{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.88);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(226,232,240,.85);
+  border-radius: 16px;
+  padding: 10px 14px;
+  box-shadow: 0 3px 14px rgba(0,0,0,.06);
+}
+.media-bubble .audio-wrap svg{color:#8b5cf6;flex-shrink:0;}
+.media-bubble .audio-wrap audio{
+  flex:1;
+  min-width:180px;
+  height:32px;
+  accent-color:#8b5cf6;
+  outline:none;
+}
+
+/* File pill */
+.media-bubble .file-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.88);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(226,232,240,.85);
+  border-radius: 14px;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 3px 14px rgba(0,0,0,.06);
+  transition: box-shadow .15s, transform .15s;
+}
+.media-bubble .file-pill:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-1px);}
+.media-bubble .file-pill .file-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#8b5cf6,#6366f1);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:16px;
+}
+.media-bubble .file-pill .file-info{display:flex;flex-direction:column;gap:1px;}
+.media-bubble .file-pill .file-name{font-weight:600;font-size:13px;color:#1e293b;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.media-bubble .file-pill .file-sub{font-size:11px;color:#94a3b8;}
+
 .msg-meta{font-size:11px;color:#94a3b8;padding:0 4px;}
 .msg-acts{display:flex;gap:6px;padding:0 4px;}
 .msg-act{background:none;border:none;cursor:pointer;color:#94a3b8;padding:2px;transition:color .12s;}
@@ -131,6 +208,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .send-btn span{display:none;}
   .send-btn{padding:8px 14px;}
   .msg-col{max-width:85%;}
+  .media-bubble .uploaded-img{max-width:200px;}
+  .media-bubble .file-pill .file-name{max-width:110px;}
 }
 </style>
 </head>
@@ -264,13 +343,11 @@ let isRecording   = false;
 let micTimer      = null;
 let micSecs       = 0;
 
-// ── Sidebar ──
 function toggleSB() {
   const isOpen = sidebar.classList.toggle('open');
   sidebarOverlay.classList.toggle('active', isOpen);
 }
 
-// ── Input glow ──
 msgInput.addEventListener('focus', () => inputGlow.classList.add('active'));
 msgInput.addEventListener('blur',  () => { if (!msgInput.value.trim()) inputGlow.classList.remove('active'); });
 msgInput.addEventListener('input', () => {
@@ -282,7 +359,6 @@ msgInput.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
 });
 
-// ── Deep Think ──
 function toggleDeepThink() {
   deepThink = !deepThink;
   deepBtn.style.background  = deepThink ? 'rgba(139,92,246,.15)' : '';
@@ -290,7 +366,6 @@ function toggleDeepThink() {
   deepBtn.style.color       = deepThink ? '#8b5cf6' : '';
 }
 
-// ── Voice / Mic ──
 async function toggleMic() {
   const micBtn   = document.getElementById('mic-btn');
   const micLabel = document.getElementById('mic-label');
@@ -330,7 +405,6 @@ async function toggleMic() {
   }
 }
 
-// ── Sessions ──
 function save() { localStorage.setItem('dai_v3', JSON.stringify(sessions)); }
 
 function renderHistory() {
@@ -381,19 +455,30 @@ function clearMessages() {
 function getCur() { return sessions.find(x => x.id === curId); }
 function getTime() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
+// ── File type helper ──
+function getFileExt(name) { return (name.split('.').pop() || '').toLowerCase(); }
+function getFileEmoji(name) {
+  const ext = getFileExt(name);
+  if (['pdf'].includes(ext)) return '📄';
+  if (['doc','docx'].includes(ext)) return '📝';
+  if (['xls','xlsx'].includes(ext)) return '📊';
+  if (['txt'].includes(ext)) return '📃';
+  return '📎';
+}
+
 // ── Render bubble ──
 function addBubble(role, text, animate = true) {
   const wrap = document.createElement('div');
   wrap.className = 'msg ' + role;
   if (!animate) wrap.style.animation = 'none';
 
-  const col    = document.createElement('div');
+  const col = document.createElement('div');
   col.className = 'msg-col';
 
   const bubble = document.createElement('div');
-  bubble.className = 'bubble';
 
   if (role === 'ai') {
+    bubble.className = 'bubble';
     let thinkContent = '', finalContent = text;
     const ts = text.indexOf('<think>'), te = text.indexOf('</think>');
     if (ts !== -1 && te !== -1 && te > ts) {
@@ -420,19 +505,45 @@ function addBubble(role, text, animate = true) {
     }
     html += `<div class="bubble-text">${finalContent.replace(/\n/g, '<br>')}</div>`;
     bubble.innerHTML = html;
+
   } else {
-    // User bubble
+    // ── USER bubble — differentiate media vs text ──
     if (text.startsWith('data:image')) {
-      bubble.innerHTML = `<img src="${text}" onclick="openImgModal('${text}')" style="max-width:240px;border-radius:14px;display:block;cursor:pointer;">`;
+      // Image: no background bubble
+      bubble.className = 'bubble media-bubble';
+      bubble.innerHTML = `<img class="uploaded-img" src="${text}" onclick="openImgModal('${text}')" alt="Uploaded image">`;
+
     } else if (text.startsWith('AUDIO:')) {
+      // Audio: clean frosted card, no blue
       const audioUrl = text.replace('AUDIO:', '');
-      bubble.innerHTML = `<audio controls style="max-width:240px;"><source src="${audioUrl}" type="audio/webm"></audio>`;
+      bubble.className = 'bubble media-bubble';
+      bubble.innerHTML = `<div class="audio-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+        <audio controls><source src="${audioUrl}" type="audio/webm"></audio>
+      </div>`;
+
     } else if (text.startsWith('FILE:')) {
+      // File: clean pill card
       const parts    = text.split('|');
       const fileName = parts[0].replace('FILE:', '');
-      const fileUrl  = parts[1];
-      bubble.innerHTML = `<a href="${fileUrl}" target="_blank" style="color:white;text-decoration:none;display:flex;align-items:center;gap:8px;">📎 ${fileName}</a>`;
+      const fileUrl  = parts[1] || '#';
+      const emoji    = getFileEmoji(fileName);
+      bubble.className = 'bubble media-bubble';
+      bubble.innerHTML = `<a class="file-pill" href="${fileUrl}" target="_blank">
+        <div class="file-icon">${emoji}</div>
+        <div class="file-info">
+          <span class="file-name">${fileName}</span>
+          <span class="file-sub">Tap to open</span>
+        </div>
+      </a>`;
+
     } else {
+      // Plain text message — keep purple gradient
+      bubble.className = 'bubble';
       bubble.innerHTML = text.replace(/\n/g, '<br>');
     }
   }
@@ -486,7 +597,6 @@ function removeTyping() {
   if (el) el.remove();
 }
 
-// ── Send message ──
 async function sendMsg() {
   const text = msgInput.value.trim();
   if (!text && !attachedFile) return;
@@ -497,11 +607,10 @@ async function sendMsg() {
   msgInput.style.height = 'auto';
   inputGlow.classList.remove('active');
 
-  const userText  = text;   // original typed text — sent to server
-  let   displayMsg = text;  // what appears in chat UI
+  const userText   = text;
+  let   displayMsg = text;
 
   if (attachedFile) {
-    // IMAGE — read as base64 for display
     if (attachedFile.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -510,14 +619,10 @@ async function sendMsg() {
       };
       reader.readAsDataURL(attachedFile);
       return;
-    }
-    // AUDIO — show player in chat
-    else if (attachedFile.type.startsWith('audio/')) {
+    } else if (attachedFile.type.startsWith('audio/')) {
       const audioUrl = URL.createObjectURL(attachedFile);
       displayMsg = 'AUDIO:' + audioUrl;
-    }
-    // OTHER FILES — show link in chat
-    else {
+    } else {
       const fileUrl = URL.createObjectURL(attachedFile);
       displayMsg = 'FILE:' + attachedFile.name + '|' + fileUrl;
     }
@@ -540,7 +645,6 @@ async function processMessage(displayMsg, userText) {
     renderHistory();
   }
 
-  // Save file ref then clear UI immediately
   const file = attachedFile;
   attachBar.style.display = 'none';
   attachNm.textContent    = '';
@@ -556,7 +660,6 @@ async function processMessage(displayMsg, userText) {
     let data;
 
     if (file) {
-      // File upload — send actual file + user's typed text
       const fd = new FormData();
       fd.append('file',    file);
       fd.append('message', userText || 'Please analyze this file.');
@@ -564,7 +667,6 @@ async function processMessage(displayMsg, userText) {
       const res = await fetch('/upload', { method: 'POST', body: fd });
       data = await res.json();
     } else {
-      // Text-only chat
       const res = await fetch('/chat', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -610,17 +712,13 @@ function clearFile() {
   attachNm.textContent = '';
 }
 
-// ── Image modal ──
 const imgModal = document.getElementById('img-modal');
 const modalImg = document.getElementById('modal-img');
-
 function openImgModal(src) { modalImg.src = src; imgModal.classList.add('active'); }
 function closeImgModal()   { imgModal.classList.remove('active'); }
-
 document.getElementById('img-close').onclick = closeImgModal;
 imgModal.onclick = e => { if (e.target === imgModal) closeImgModal(); };
 
-// ── Init ──
 if (sessions.length > 0) loadSession(sessions[sessions.length - 1].id);
 else newChat();
 </script>
