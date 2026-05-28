@@ -485,6 +485,39 @@ body::before{
 .sb-history::-webkit-scrollbar{
   display:none;
 }
+/* IMAGE MODAL */
+#img-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.82);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:20px;
+  animation:fadeIn .2s ease;
+}
+
+#img-modal.active{
+  display:flex;
+}
+
+#modal-img{
+  max-width:95%;
+  max-height:92%;
+  border-radius:18px;
+  box-shadow:0 10px 50px rgba(0,0,0,.4);
+}
+
+#img-close{
+  position:absolute;
+  top:18px;
+  right:22px;
+  font-size:28px;
+  color:white;
+  cursor:pointer;
+  user-select:none;
+}
 </style>
 </head>
 <body>
@@ -601,7 +634,11 @@ body::before{
 </main>
 
 <input type="file" id="file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" onchange="onFile(this)">
-
+<!-- IMAGE MODAL -->
+<div id="img-modal">
+  <span id="img-close">✕</span>
+  <img id="modal-img">
+</div>
 <script>
 const chatArea       = document.getElementById('chat-area');
 const welcome        = document.getElementById('welcome');
@@ -786,14 +823,32 @@ function addBubble(role, text, fileData=null, animate=true) {
     if (text.startsWith('data:image')) {
 
   bubble.innerHTML = `
-    <img src="${text}"
+    <img 
+  src="${text}"
+  onclick="openImgModal('${text}')"
+  style="
+    max-width:240px;
+    border-radius:14px;
+    display:block;
+    cursor:pointer;
+  ">
     style="
       max-width:240px;
       border-radius:14px;
       display:block;
     ">
   `;
+else if (text.startsWith('AUDIO:')) {
 
+  const audioUrl = text.replace('AUDIO:', '');
+
+  bubble.innerHTML = `
+    <audio controls style="max-width:240px;">
+      <source src="${audioUrl}" type="audio/webm">
+    </audio>
+  `;
+
+}
 } else if (text.startsWith('FILE:')) {
 
   const parts = text.split('|');
@@ -898,7 +953,9 @@ if (attachedFile) {
   // AUDIO
   else if (attachedFile.type.startsWith('audio/')) {
 
-    displayMsg = '🎤 Voice message';
+    const audioUrl = URL.createObjectURL(attachedFile);
+
+displayMsg = `AUDIO:${audioUrl}`;
 
   }
 
@@ -978,6 +1035,26 @@ function clearFile() {
 }
 
 // Init
+// IMAGE MODAL
+const imgModal = document.getElementById('img-modal');
+const modalImg = document.getElementById('modal-img');
+
+function openImgModal(src){
+  modalImg.src = src;
+  imgModal.classList.add('active');
+}
+
+function closeImgModal(){
+  imgModal.classList.remove('active');
+}
+
+document.getElementById('img-close').onclick = closeImgModal;
+
+imgModal.onclick = e => {
+  if(e.target === imgModal){
+    closeImgModal();
+  }
+};
 if (sessions.length > 0) loadSession(sessions[sessions.length-1].id);
 else newChat();
 </script>
