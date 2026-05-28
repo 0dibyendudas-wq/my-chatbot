@@ -466,6 +466,25 @@ body::before{
     max-width:85%;
   }
 }
+/* Hide scrollbar but keep scrolling */
+
+.chat-area{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+.chat-area::-webkit-scrollbar{
+  display:none;
+}
+
+.sb-history{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+.sb-history::-webkit-scrollbar{
+  display:none;
+}
 </style>
 </head>
 <body>
@@ -725,7 +744,7 @@ function getTime() {
   return new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
 }
 
-function addBubble(role, text, animate=true) {
+function addBubble(role, text, fileData=null, animate=true) {
   const wrap = document.createElement('div');
   wrap.className = 'msg ' + role;
   if (!animate) wrap.style.animation = 'none';
@@ -764,7 +783,42 @@ function addBubble(role, text, animate=true) {
     html += `<div class="bubble-text">${finalContent.replace(/\n/g,'<br>')}</div>`;
     bubble.innerHTML = html;
   } else {
-    bubble.innerHTML = text.replace(/\n/g,'<br>');
+    if (text.startsWith('data:image')) {
+
+  bubble.innerHTML = `
+    <img src="${text}"
+    style="
+      max-width:240px;
+      border-radius:14px;
+      display:block;
+    ">
+  `;
+
+} else if (text.startsWith('FILE:')) {
+
+  const parts = text.split('|');
+  const fileName = parts[0].replace('FILE:', '');
+  const fileUrl = parts[1];
+
+  bubble.innerHTML = `
+    <a href="${fileUrl}"
+       target="_blank"
+       style="
+         color:white;
+         text-decoration:none;
+         display:flex;
+         align-items:center;
+         gap:8px;
+       ">
+       📎 ${fileName}
+    </a>
+  `;
+
+} else {
+
+  bubble.innerHTML = text.replace(/\n/g,'<br>');
+
+}
   }
 
   const meta = document.createElement('div');
@@ -822,8 +876,43 @@ async function sendMsg() {
   msgInput.style.height = 'auto';
   inputGlow.classList.remove('active');
 
-  const displayMsg = text || (attachedFile?.type.startsWith('audio/') ? '🎤 Voice message' : `📎 ${attachedFile?.name}`);
-  addBubble('user', text || displayMsg);
+  let displayMsg = text;
+
+if (attachedFile) {
+
+  // IMAGE
+  if (attachedFile.type.startsWith('image/')) {
+
+    displayMsg = await new Promise(resolve => {
+
+      const reader = new FileReader();
+
+      reader.onload = e => resolve(e.target.result);
+
+      reader.readAsDataURL(attachedFile);
+
+    });
+
+  }
+
+  // AUDIO
+  else if (attachedFile.type.startsWith('audio/')) {
+
+    displayMsg = '🎤 Voice message';
+
+  }
+
+  // OTHER FILES
+  else {
+
+    const fileUrl = URL.createObjectURL(attachedFile);
+
+    displayMsg = `FILE:${attachedFile.name}|${fileUrl}`;
+
+  }
+
+}
+  addBubble('user', displayMsg);
 
   const s = getCur();
   if (s) {
