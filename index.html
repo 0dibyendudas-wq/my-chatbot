@@ -939,37 +939,29 @@ async function sendMsg() {
 if (attachedFile) {
 
   // IMAGE
-  if (attachedFile.type.startsWith('image/')) {
+if (attachedFile.type.startsWith('image/')) {
 
-    displayMsg = await new Promise(resolve => {
+  // image code
 
-      const reader = new FileReader();
+}
 
-      reader.onload = e => resolve(e.target.result);
+// AUDIO
+else if (attachedFile.type.startsWith('audio/')) {
 
-      reader.readAsDataURL(attachedFile);
+  const audioUrl = URL.createObjectURL(attachedFile);
 
-    });
+  displayMsg = `AUDIO:${audioUrl}`;
 
-  }
+}
 
-  // AUDIO
-  else if (attachedFile.type.startsWith('audio/')) {
+// OTHER FILES
+else {
 
-    const audioUrl = URL.createObjectURL(attachedFile);
+  const fileUrl = URL.createObjectURL(attachedFile);
 
-displayMsg = `AUDIO:${audioUrl}`;
+  displayMsg = `FILE:${attachedFile.name}|${fileUrl}`;
 
-  }
-
-  // OTHER FILES
-  else {
-
-    const fileUrl = URL.createObjectURL(attachedFile);
-
-    displayMsg = `FILE:${attachedFile.name}|${fileUrl}`;
-
-  }
+}
 
 }
   addBubble('user', displayMsg);
